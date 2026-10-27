@@ -1,0 +1,202 @@
+{% comment %}
+  Access custom page — type: Login
+
+  Brand settings are the assigns below and the :root tokens in <style>.
+  org.* comes from Cloudflare One > Reusable components > Custom pages
+  (Access login page), so the name and logo follow the account settings.
+
+  Rules: exactly one <cf-access-authbox>, outside any Liquid condition.
+  No scripts, SVG, <link>, <button>, <form>, or url() in CSS.
+
+  The authbox draws its labels in org.text_color and its buttons in white,
+  so it sits on the light lower half of the card.
+{% endcomment %}
+{% assign brand_name = org.name | default: "DavidT · Zero Trust" %}
+{% assign brand_logo = org.logo_url | default: "https://davidtofan.com/apple-touch-icon.png" %}
+{% assign launcher_url = "https://your-team.cloudflareaccess.com" %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Sign in to {{ app_name }} · {{ brand_name }}</title>
+    <style>
+      :root {
+        --bg: #0b1120;
+        --brand: #0f172a;
+        --panel: #111a2e;
+        --border: #1e2a44;
+        --text: #e2e8f0;
+        --strong: #f8fafc;
+        --muted: #94a3b8;
+        --subtle: #64748b;
+        --accent: #60a5fa;
+        --ok: #10b981;
+        --radius: 16px;
+        --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--bg); }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 48px 16px 32px;
+        color: var(--text);
+        font: 15px/1.55 var(--sans);
+        background:
+          radial-gradient(1100px 520px at 50% -180px, rgba(96, 165, 250, 0.16), transparent 70%),
+          linear-gradient(180deg, var(--brand) 0%, var(--bg) 60%);
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 28px;
+        color: var(--strong);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .brand img {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 0 1px var(--border), 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+      .brand small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .card {
+        width: 100%;
+        max-width: 440px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: 0 24px 60px rgba(2, 6, 23, 0.55);
+      }
+      .card-head {
+        padding: 28px 32px 24px;
+        background: linear-gradient(160deg, #15213b 0%, var(--panel) 70%);
+        border-bottom: 1px solid var(--border);
+      }
+      .eyebrow {
+        margin: 0 0 6px;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 0;
+        color: var(--strong);
+        font-size: 24px;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        overflow-wrap: anywhere;
+      }
+      .lead { margin: 8px 0 0; color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+      .lead strong { color: var(--text); font-weight: 500; }
+      .card-body {
+        padding: 24px 32px 28px;
+        color: #1e293b;
+        background: #ffffff;
+        color-scheme: light;
+      }
+      .banner {
+        margin: 0 0 20px;
+        padding: 12px 14px;
+        border: 1px solid;
+        border-radius: 10px;
+        font-size: 14px;
+      }
+      .banner--info { color: #1e40af; background: #eff6ff; border-color: #bfdbfe; }
+      .banner--warning { color: #92400e; background: #fffbeb; border-color: #fde68a; }
+      .banner--error { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+      cf-access-authbox { display: block; width: 100%; }
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 24px;
+        padding-top: 18px;
+        border-top: 1px solid #e2e8f0;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 999px;
+        color: #475569;
+        background: #f8fafc;
+        font-size: 12px;
+      }
+      .dot { width: 7px; height: 7px; border-radius: 50%; background: #94a3b8; }
+      .dot--ok { background: var(--ok); }
+      footer {
+        margin-top: auto;
+        padding-top: 32px;
+        color: var(--subtle);
+        font-size: 12px;
+        text-align: center;
+      }
+      footer a { color: var(--muted); }
+      @media (max-width: 480px) {
+        body { padding-top: 32px; }
+        .card-head { padding: 24px 20px 20px; }
+        .card-body { padding: 20px 20px 24px; }
+        h1 { font-size: 21px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="brand">
+      <img src="{{ brand_logo }}" alt="" width="40" height="40" />
+      <span>{{ brand_name }}<small>Secure access</small></span>
+    </div>
+
+    <main class="card">
+      <div class="card-head">
+        <p class="eyebrow">Sign in</p>
+        <h1>{{ app_name }}</h1>
+        <p class="lead">Continue to <strong>{{ app_domain }}</strong> with your {{ brand_name }} identity.</p>
+      </div>
+
+      <div class="card-body">
+        {% if message.text.size > 0 %}
+        <p class="banner banner--{{ message.level | default: 'info' }}" role="status">{{ message.text }}</p>
+        {% endif %}
+
+        <cf-access-authbox></cf-access-authbox>
+
+        <div class="meta">
+          {% if request.country.size > 0 %}<span class="chip">Location · {{ request.country }}</span>{% endif %}
+          {% if request.is_warp %}
+          <span class="chip"><span class="dot dot--ok"></span>Cloudflare One Client on</span>
+          {% else %}
+          <span class="chip"><span class="dot"></span>Cloudflare One Client off</span>
+          {% endif %}
+          {% if request.is_gateway %}<span class="chip"><span class="dot dot--ok"></span>Gateway</span>{% endif %}
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      Protected by Cloudflare Access · <a href="{{ launcher_url }}">App Launcher</a>
+    </footer>
+  </body>
+</html>

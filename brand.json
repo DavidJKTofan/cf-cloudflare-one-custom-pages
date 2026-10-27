@@ -1,0 +1,27 @@
+{
+  "$comment": "Branding applied by `npm run deploy:branding`. The Access templates in access-pages/ carry the same name, logo and colors in their own header block.",
+  "name": "DavidT · Zero Trust",
+  "logo": "https://davidtofan.com/apple-touch-icon.png",
+  "colors": {
+    "primary": "#0F172A",
+    "surface": "#F1F5F9",
+    "onPrimary": "#FFFFFF"
+  },
+  "accessPages": {
+    "login": { "name": "DavidT · Login", "file": "access-pages/login.html" },
+    "identity_denied": { "name": "DavidT · Identity denied", "file": "access-pages/identity-denied.html" },
+    "forbidden": { "name": "DavidT · Forbidden", "file": "access-pages/forbidden.html" },
+    "interstitial": { "name": "DavidT · CLI approval", "file": "access-pages/interstitial.html" }
+  },
+  "appLauncher": {
+    "title": "DavidT · Zero Trust",
+    "message": "Sign in to reach your applications protected by Cloudflare Access.",
+    "footerLinks": null
+  },
+  "gatewayBlockPage": {
+    "headerText": "This site is blocked",
+    "footerText": "Blocked by a Cloudflare Gateway policy. If you need this site for work, contact your administrator and include the details below.",
+    "mailtoAddress": "",
+    "mailtoSubject": "Blocked site request"
+  }
+}

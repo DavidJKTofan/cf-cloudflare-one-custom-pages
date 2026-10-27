@@ -1,0 +1,120 @@
+{
+  "login": {
+    "default": {
+      "app_name": "Demo · Internal Wiki",
+      "app_domain": "wiki.example.com",
+      "locale": "en-US",
+      "org": {
+        "name": "DavidT · Zero Trust",
+        "logo_url": "https://davidtofan.com/apple-touch-icon.png",
+        "bg_color": "#0F172A",
+        "accent_color": "#4687f1",
+        "text_color": "#333333"
+      },
+      "idps": [
+        { "index": 0, "name": "GitHub", "type": "github" },
+        { "index": 1, "name": "Corporate SSO", "type": "saml" },
+        { "index": 2, "name": "", "type": "cloudflare" }
+      ],
+      "has_onetimepin": true,
+      "message": { "text": "", "level": "info" },
+      "request": { "country": "DE", "is_warp": false, "is_gateway": false }
+    },
+    "error": {
+      "app_name": "Demo · Internal Wiki",
+      "app_domain": "wiki.example.com",
+      "org": { "name": "DavidT · Zero Trust", "logo_url": "https://davidtofan.com/apple-touch-icon.png" },
+      "idps": [{ "index": 0, "name": "GitHub", "type": "github" }],
+      "has_onetimepin": true,
+      "message": { "text": "That code is invalid or has expired. Request a new one and try again.", "level": "error" },
+      "request": { "country": "DE", "is_warp": true, "is_gateway": true }
+    }
+  },
+  "identity-denied": {
+    "default": {
+      "locale": "en-US",
+      "ray_id": "8f3a9c2e1b7d4a60",
+      "request": { "country": "DE", "is_warp": false, "is_gateway": false },
+      "app": { "name": "Demo · Finance Portal", "domain": "finance.example.com", "type": "self_hosted", "logo_url": "" },
+      "user": {
+        "email": "alex@example.com",
+        "name": "Alex Rivera",
+        "given_name": "Alex",
+        "surname": "Rivera",
+        "groups": [
+          { "name": "Engineering", "email": "eng@example.com" },
+          { "name": "All staff", "email": "staff@example.com" },
+          { "name": "Demo testers", "email": "" }
+        ],
+        "idp": { "type": "github", "name": "GitHub" },
+        "risk_score": "low",
+        "amr": ["pwd", "mfa"],
+        "posture": [
+          { "rule_name": "macOS 15 or later", "type": "os_version", "success": true, "description": "OS version is 15.4" },
+          { "rule_name": "Disk encryption", "type": "disk_encryption", "success": false, "description": "FileVault enabled", "error": "FileVault is turned off on this device" }
+        ]
+      },
+      "policy_evaluation": {
+        "policies": [
+          {
+            "name": "Allow · Finance team",
+            "decision": "allow",
+            "status": "fail",
+            "rules": [
+              { "type": "group", "name": "Finance", "context": "include", "status": "fail" },
+              { "type": "email_domain", "name": "example.com", "context": "include", "status": "success" },
+              { "type": "device_posture", "name": "Disk encryption", "context": "require", "status": "fail" },
+              { "type": "auth_method", "name": "mfa", "context": "require", "status": "success" },
+              { "type": "geo", "name": "Sanctioned countries", "context": "exclude", "status": "fail" }
+            ]
+          },
+          {
+            "name": "Allow · Contractors (time-boxed)",
+            "decision": "allow",
+            "status": "fail",
+            "rules": [
+              { "type": "email_list", "name": "Approved contractors", "context": "include", "status": "fail" }
+            ]
+          }
+        ]
+      }
+    },
+    "minimal": {
+      "request": { "country": "US", "is_warp": true, "is_gateway": true },
+      "app": { "name": "Demo · Finance Portal", "domain": "finance.example.com", "type": "self_hosted" },
+      "user": { "email": "sam@example.org" }
+    }
+  },
+  "forbidden": {
+    "default": {
+      "ray_id": "8f3a9c2e1b7d4a61",
+      "request": { "country": "BR", "is_warp": false, "is_gateway": false },
+      "app": { "name": "Demo · Build Server", "domain": "ci.example.com", "type": "self_hosted" },
+      "policy_evaluation": {
+        "policies": [
+          {
+            "name": "Service · Office networks",
+            "decision": "non_identity",
+            "status": "fail",
+            "rules": [
+              { "type": "ip", "name": "203.0.113.0/24", "context": "include", "status": "fail" },
+              { "type": "geo", "name": "DE", "context": "require", "status": "fail" }
+            ]
+          }
+        ]
+      }
+    },
+    "minimal": {
+      "request": { "country": "US", "is_warp": false, "is_gateway": false },
+      "app": { "name": "Demo · Build Server", "domain": "ci.example.com", "type": "self_hosted" }
+    }
+  },
+  "interstitial": {
+    "default": {
+      "requesting_tool": "cloudflared",
+      "request": { "country": "DE", "is_warp": true, "is_gateway": true },
+      "app": { "name": "Demo · SSH Bastion", "domain": "ssh.example.com" },
+      "user": { "email": "alex@example.com", "groups": [{ "name": "Engineering" }] }
+    }
+  }
+}

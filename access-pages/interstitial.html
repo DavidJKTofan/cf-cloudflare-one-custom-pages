@@ -1,0 +1,166 @@
+{% comment %}
+  Access custom page — type: Interstitial
+
+  Shown when a command-line tool (cloudflared) asks to use the visitor's
+  Access session. Brand settings are the assigns below and the :root tokens.
+
+  Rules: exactly one <cf-access-cli-approval>, outside any Liquid condition.
+  It sits on the light lower half of the card, like the login authbox.
+  No scripts, SVG, <link>, <button>, <form>, or url() in CSS.
+{% endcomment %}
+{% assign brand_name = "DavidT · Zero Trust" %}
+{% assign brand_logo = "https://davidtofan.com/apple-touch-icon.png" %}
+{% assign tool = requesting_tool | default: "cloudflared" %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Approve {{ tool }} · {{ app.name }}</title>
+    <style>
+      :root {
+        --bg: #0b1120;
+        --brand: #0f172a;
+        --panel: #111a2e;
+        --border: #1e2a44;
+        --text: #e2e8f0;
+        --strong: #f8fafc;
+        --muted: #94a3b8;
+        --subtle: #64748b;
+        --accent: #60a5fa;
+        --ok: #10b981;
+        --radius: 16px;
+        --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--bg); }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 48px 16px 32px;
+        color: var(--text);
+        font: 15px/1.55 var(--sans);
+        background:
+          radial-gradient(1100px 520px at 50% -180px, rgba(96, 165, 250, 0.16), transparent 70%),
+          linear-gradient(180deg, var(--brand) 0%, var(--bg) 60%);
+        -webkit-font-smoothing: antialiased;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 28px;
+        color: var(--strong);
+        font-weight: 600;
+      }
+      .brand img {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 0 1px var(--border), 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+      .brand small {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .card {
+        width: 100%;
+        max-width: 480px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: 0 24px 60px rgba(2, 6, 23, 0.55);
+      }
+      .card-head {
+        padding: 28px 32px 24px;
+        background: linear-gradient(160deg, #15213b 0%, var(--panel) 70%);
+        border-bottom: 1px solid var(--border);
+      }
+      .eyebrow {
+        margin: 0 0 6px;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      h1 { margin: 0; color: var(--strong); font-size: 23px; line-height: 1.25; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+      .lead { margin: 8px 0 0; color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+      .lead code, .rows code { font-family: var(--mono); font-size: 13px; }
+      .lead code { color: var(--text); }
+      .card-body {
+        padding: 24px 32px 28px;
+        color: #1e293b;
+        background: #ffffff;
+        color-scheme: light;
+      }
+      .rows { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 0 0 20px; font-size: 14px; }
+      .rows dt { color: #64748b; }
+      .rows dd { margin: 0; color: #0f172a; font-weight: 500; text-align: right; overflow-wrap: anywhere; }
+      .notice {
+        margin: 0 0 20px;
+        padding: 12px 14px;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        color: #92400e;
+        background: #fffbeb;
+        font-size: 13px;
+      }
+      .notice b { color: #78350f; }
+      cf-access-cli-approval { display: block; width: 100%; }
+      .meta { margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 12px; }
+      footer { margin-top: auto; padding-top: 32px; color: var(--subtle); font-size: 12px; text-align: center; }
+      @media (max-width: 480px) {
+        body { padding-top: 32px; }
+        .card-head { padding: 24px 20px 20px; }
+        .card-body { padding: 20px 20px 24px; }
+        h1 { font-size: 20px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="brand">
+      <img src="{{ brand_logo }}" alt="" width="40" height="40" />
+      <span>{{ brand_name }}<small>Secure access</small></span>
+    </div>
+
+    <main class="card">
+      <div class="card-head">
+        <p class="eyebrow">Command-line sign-in</p>
+        <h1>Allow <code>{{ tool }}</code> to access {{ app.name }}?</h1>
+        <p class="lead">A terminal on your device asked to use your Access session for <code>{{ app.domain }}</code>.</p>
+      </div>
+
+      <div class="card-body">
+        <dl class="rows">
+          <dt>Application</dt><dd>{{ app.name }}</dd>
+          <dt>Requested by</dt><dd><code>{{ tool }}</code></dd>
+          {% if user.email.size > 0 %}<dt>Signed in as</dt><dd>{{ user.email }}</dd>{% endif %}
+          {% if request.country.size > 0 %}<dt>Location</dt><dd>{{ request.country }}</dd>{% endif %}
+          <dt>Cloudflare One Client</dt><dd>{% if request.is_warp %}Connected{% else %}Not detected{% endif %}</dd>
+        </dl>
+
+        <p class="notice">
+          <b>Only approve if you started this yourself</b>, for example by running
+          <code>cloudflared access login</code> a moment ago. If you didn't, deny the request.
+        </p>
+
+        <cf-access-cli-approval></cf-access-cli-approval>
+
+        <p class="meta">Approving issues a token to {{ tool }} for {{ app.domain }} only. You can close this tab afterwards.</p>
+      </div>
+    </main>
+
+    <footer>Protected by Cloudflare Access · {{ brand_name }}</footer>
+  </body>
+</html>

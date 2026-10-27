@@ -1,0 +1,20 @@
+{
+  "name": "cf-cloudflare-one-custom-pages",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Branded Cloudflare One (Zero Trust) custom pages: Access login/denial/CLI templates, App Launcher, Gateway block page, and a Workers identity page.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "preview": "node tools/preview.mjs",
+    "validate": "node tools/cf1.mjs validate",
+    "deploy:pages": "node tools/cf1.mjs pages",
+    "deploy:branding": "node tools/cf1.mjs branding",
+    "demo:mode": "node tools/cf1.mjs mode"
+  },
+  "devDependencies": {
+    "liquidjs": "10.30.0"
+  }
+}

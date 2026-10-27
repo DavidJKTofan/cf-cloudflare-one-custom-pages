@@ -1,0 +1,4 @@
+# Copy to .dev.vars for `wrangler dev`. Never commit .dev.vars.
+DEMO=true
+DEBUG=true
+# API_TOKEN=

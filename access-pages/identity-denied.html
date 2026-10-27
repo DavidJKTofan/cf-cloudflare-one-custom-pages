@@ -1,0 +1,354 @@
+{% comment %}
+  Access custom page — type: Identity denied
+
+  Shown after a visitor signs in but fails the application's identity rules.
+  Brand settings are the assigns below and the :root tokens in <style>.
+
+  policy_evaluation is structured data, not a ready-made reason. Policy and
+  rule names are written by your admins: review them before you show them to
+  end users. Remove the groups list if group names are sensitive.
+
+  No scripts, SVG, <link>, <button>, <form>, or url() in CSS.
+{% endcomment %}
+{% assign brand_name = "DavidT · Zero Trust" %}
+{% assign brand_logo = "https://davidtofan.com/apple-touch-icon.png" %}
+{% assign launcher_url = "https://your-team.cloudflareaccess.com" %}
+{% assign policies = policy_evaluation.policies %}
+{% if user.posture %}{% assign checks = user.posture %}{% else %}{% assign checks = posture %}{% endif %}
+{% assign failed_checks = 0 %}
+{% for check in checks %}{% unless check.success %}{% assign failed_checks = failed_checks | plus: 1 %}{% endunless %}{% endfor %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="robots" content="noindex" />
+    <title>Access denied · {{ app.name }}</title>
+    <style>
+      :root {
+        --bg: #0b1120;
+        --brand: #0f172a;
+        --panel: #111a2e;
+        --panel-2: #0d1526;
+        --border: #1e2a44;
+        --text: #e2e8f0;
+        --strong: #f8fafc;
+        --muted: #94a3b8;
+        --subtle: #64748b;
+        --accent: #60a5fa;
+        --ok: #34d399;
+        --warn: #fbbf24;
+        --fail: #f87171;
+        --radius: 14px;
+        --sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        color-scheme: dark;
+      }
+      * { box-sizing: border-box; }
+      html { background: var(--bg); }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        font: 15px/1.55 var(--sans);
+        background:
+          radial-gradient(900px 420px at 15% -120px, rgba(248, 113, 113, 0.1), transparent 70%),
+          linear-gradient(180deg, var(--brand) 0%, var(--bg) 420px);
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .wrap { max-width: 1040px; margin: 0 auto; padding: 0 16px; }
+      .topbar { border-bottom: 1px solid var(--border); }
+      .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 64px; }
+      .brand { display: flex; align-items: center; gap: 10px; color: var(--strong); font-weight: 600; }
+      .brand img { width: 32px; height: 32px; border-radius: 8px; }
+      .topbar small { color: var(--muted); font-size: 13px; }
+      .hero { display: flex; gap: 20px; align-items: flex-start; padding: 40px 0 28px; }
+      .badge {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        color: var(--fail);
+        background: rgba(248, 113, 113, 0.12);
+        border: 1px solid rgba(248, 113, 113, 0.35);
+        font-size: 26px;
+        font-weight: 700;
+      }
+      .eyebrow { margin: 0 0 6px; color: var(--fail); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+      h1 { margin: 0; color: var(--strong); font-size: clamp(26px, 4vw, 34px); line-height: 1.15; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+      .lead { margin: 10px 0 0; max-width: 680px; color: var(--muted); font-size: 16px; }
+      .lead strong { color: var(--text); font-weight: 500; }
+      .app {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+        padding: 16px 18px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      .app-logo {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #1d2b4a;
+        color: var(--accent);
+        font-weight: 700;
+        overflow: hidden;
+      }
+      .app-logo img { width: 100%; height: 100%; object-fit: cover; }
+      .app b { display: block; color: var(--strong); font-weight: 600; overflow-wrap: anywhere; }
+      .app span { color: var(--muted); font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
+      .grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; padding-bottom: 40px; }
+      .panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+      .panel + .panel { margin-top: 20px; }
+      h2 { margin: 0 0 6px; color: var(--strong); font-size: 17px; letter-spacing: -0.01em; }
+      .hint { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+      .policy { border: 1px solid var(--border); border-radius: 12px; background: var(--panel-2); }
+      .policy + .policy { margin-top: 14px; }
+      .policy-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+      .policy-head h3 { margin: 0; color: var(--strong); font-size: 15px; overflow-wrap: anywhere; }
+      .policy-head p { margin: 2px 0 0; color: var(--subtle); font-size: 12px; }
+      .tag { display: inline-block; margin-left: 6px; padding: 1px 6px; border: 1px solid var(--border); border-radius: 4px; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; vertical-align: 2px; }
+      .pill { flex: none; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+      .pill--ok { color: var(--ok); background: rgba(52, 211, 153, 0.12); }
+      .pill--fail { color: var(--fail); background: rgba(248, 113, 113, 0.12); }
+      .pill--warn { color: var(--warn); background: rgba(251, 191, 36, 0.12); }
+      .rules { list-style: none; margin: 0; padding: 4px 16px 8px; }
+      .rule { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-top: 1px solid rgba(30, 42, 68, 0.6); }
+      .rule:first-child { border-top: 0; }
+      .mark { flex: none; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; font-size: 12px; font-weight: 700; }
+      .mark--ok { color: var(--ok); background: rgba(52, 211, 153, 0.12); }
+      .mark--fail { color: var(--fail); background: rgba(248, 113, 113, 0.12); }
+      .rule-body { flex: 1; min-width: 0; }
+      .rule-body b { display: block; color: var(--text); font-weight: 500; overflow-wrap: anywhere; }
+      .rule-body small { color: var(--subtle); font-size: 12px; }
+      .rule-state { flex: none; font-size: 12px; font-weight: 600; }
+      .rule-state--ok { color: var(--ok); }
+      .rule-state--fail { color: var(--fail); }
+      details > summary { cursor: pointer; padding: 10px 16px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); list-style: none; }
+      details > summary::-webkit-details-marker { display: none; }
+      details > summary::before { content: '▸ '; }
+      details[open] > summary::before { content: '▾ '; }
+      .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+      .steps li { position: relative; padding: 0 0 14px 34px; color: var(--muted); font-size: 14px; counter-increment: step; }
+      .steps li:last-child { padding-bottom: 0; }
+      .steps li::before { content: counter(step); position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid var(--border); border-radius: 50%; color: var(--text); font-size: 12px; font-weight: 600; }
+      .steps b { display: block; color: var(--text); font-weight: 600; }
+      dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; margin: 0; font-size: 13px; }
+      dt { color: var(--subtle); }
+      dd { margin: 0; color: var(--text); text-align: right; overflow-wrap: anywhere; }
+      .mono { font-family: var(--mono); font-size: 12px; }
+      .groups { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 16px 14px; }
+      .groups span { padding: 2px 8px; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); font-size: 12px; }
+      .cta { display: block; margin-top: 18px; padding: 10px 14px; border-radius: 10px; background: #2563eb; color: #fff; font-weight: 600; text-align: center; }
+      .cta:hover { background: #1d4ed8; text-decoration: none; }
+      .ray { margin-top: 16px; padding: 12px; border: 1px dashed var(--border); border-radius: 10px; color: var(--muted); font-size: 12px; }
+      .ray code { display: block; margin-top: 2px; color: var(--strong); font-family: var(--mono); font-size: 14px; user-select: all; }
+      footer { padding: 24px 0 32px; border-top: 1px solid var(--border); color: var(--subtle); font-size: 12px; }
+      footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+      footer a { color: var(--muted); }
+      @media (max-width: 860px) {
+        .grid { grid-template-columns: minmax(0, 1fr); }
+        .hero { padding-top: 28px; }
+      }
+      @media (max-width: 480px) {
+        .hero { flex-direction: column; gap: 14px; }
+        .badge { width: 44px; height: 44px; font-size: 20px; }
+        .panel { padding: 18px 16px; }
+        .topbar small { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="wrap">
+        <span class="brand"><img src="{{ brand_logo }}" alt="" width="32" height="32" />{{ brand_name }}</span>
+        <small>Cloudflare Access</small>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="hero">
+        <div class="badge" aria-hidden="true">✕</div>
+        <div>
+          <p class="eyebrow">Access denied</p>
+          <h1>You don't have access to {{ app.name }}</h1>
+          <p class="lead">
+            You signed in{% if user.email.size > 0 %} as <strong>{{ user.email }}</strong>{% endif %}, but your identity
+            doesn't satisfy the access policies for this application. Nothing is wrong with your account;
+            this application is limited to specific people, groups, or devices.
+          </p>
+        </div>
+      </section>
+
+      <div class="app">
+        <div class="app-logo">{% if app.logo_url.size > 0 %}<img src="{{ app.logo_url }}" alt="" />{% else %}{{ app.name | slice: 0 | upcase }}{% endif %}</div>
+        <div><b>{{ app.name }}</b><span>{{ app.domain }}</span></div>
+      </div>
+
+      <div class="grid">
+        <div>
+          {% if policies.size > 0 %}
+          <section class="panel">
+            <h2>Why access was denied</h2>
+            <p class="hint">
+              Access checked {{ policies.size }} {% if policies.size == 1 %}policy{% else %}policies{% endif %}.
+              To match an Allow policy, at least one Include rule and every Require rule must pass,
+              and no Exclude rule may match.
+            </p>
+            {% for policy in policies %}
+            {% assign passed = 0 %}{% assign failed = 0 %}
+            {% for rule in policy.rules %}
+              {% if rule.context == "exclude" %}
+                {% if rule.status == "success" %}{% assign failed = failed | plus: 1 %}{% else %}{% assign passed = passed | plus: 1 %}{% endif %}
+              {% else %}
+                {% if rule.status == "success" %}{% assign passed = passed | plus: 1 %}{% else %}{% assign failed = failed | plus: 1 %}{% endif %}
+              {% endif %}
+            {% endfor %}
+            <article class="policy">
+              <div class="policy-head">
+                <div>
+                  <h3>{{ policy.name | default: "Unnamed policy" }}<span class="tag">{{ policy.decision | replace: "_", " " }}</span></h3>
+                  <p>{{ failed }} failed · {{ passed }} passed</p>
+                </div>
+                {% if policy.status == "success" %}<span class="pill pill--ok">Matched</span>{% else %}<span class="pill pill--fail">Not matched</span>{% endif %}
+              </div>
+              {% if failed > 0 %}
+              <ul class="rules">
+                {% for rule in policy.rules %}
+                {% if rule.context == "exclude" %}{% if rule.status == "success" %}{% assign ok = false %}{% else %}{% assign ok = true %}{% endif %}{% else %}{% if rule.status == "success" %}{% assign ok = true %}{% else %}{% assign ok = false %}{% endif %}{% endif %}
+                {% unless ok %}
+                <li class="rule">
+                  <span class="mark mark--fail" aria-hidden="true">✕</span>
+                  <div class="rule-body">
+                    <b>{{ rule.name | default: rule.type | replace: "_", " " }}</b>
+                    <small>{{ rule.context | capitalize }} rule{% if rule.name.size > 0 %} · {{ rule.type | replace: "_", " " }}{% endif %}</small>
+                  </div>
+                  <span class="rule-state rule-state--fail">{% if rule.context == "exclude" %}Matched{% else %}Failed{% endif %}</span>
+                </li>
+                {% endunless %}
+                {% endfor %}
+              </ul>
+              {% endif %}
+              {% if passed > 0 %}
+              <details>
+                <summary>Show {{ passed }} passed {% if passed == 1 %}check{% else %}checks{% endif %}</summary>
+                <ul class="rules">
+                  {% for rule in policy.rules %}
+                  {% if rule.context == "exclude" %}{% if rule.status == "success" %}{% assign ok = false %}{% else %}{% assign ok = true %}{% endif %}{% else %}{% if rule.status == "success" %}{% assign ok = true %}{% else %}{% assign ok = false %}{% endif %}{% endif %}
+                  {% if ok %}
+                  <li class="rule">
+                    <span class="mark mark--ok" aria-hidden="true">✓</span>
+                    <div class="rule-body">
+                      <b>{{ rule.name | default: rule.type | replace: "_", " " }}</b>
+                      <small>{{ rule.context | capitalize }} rule{% if rule.name.size > 0 %} · {{ rule.type | replace: "_", " " }}{% endif %}</small>
+                    </div>
+                    <span class="rule-state rule-state--ok">{% if rule.context == "exclude" %}No match{% else %}Passed{% endif %}</span>
+                  </li>
+                  {% endif %}
+                  {% endfor %}
+                </ul>
+              </details>
+              {% endif %}
+            </article>
+            {% endfor %}
+          </section>
+          {% else %}
+          <section class="panel">
+            <h2>Common reasons</h2>
+            <p class="hint">Access did not share a policy breakdown for this request. These are the usual causes.</p>
+            <ul class="steps">
+              <li><b>Group membership</b>Your account is not in a group this application allows.</li>
+              <li><b>Wrong account</b>You signed in with a personal or secondary identity.</li>
+              <li><b>Device requirements</b>Your device is not enrolled, or fails a security check.</li>
+            </ul>
+          </section>
+          {% endif %}
+
+          {% if checks.size > 0 %}
+          <section class="panel">
+            <h2>Device posture</h2>
+            <p class="hint">{% if failed_checks > 0 %}{{ failed_checks }} of {{ checks.size }} device checks failed.{% else %}All {{ checks.size }} device checks passed.{% endif %}</p>
+            <div class="policy">
+              <ul class="rules">
+                {% for check in checks %}
+                <li class="rule">
+                  {% if check.success %}<span class="mark mark--ok" aria-hidden="true">✓</span>{% else %}<span class="mark mark--fail" aria-hidden="true">✕</span>{% endif %}
+                  <div class="rule-body">
+                    <b>{{ check.rule_name | default: check.type }}</b>
+                    <small>{% if check.success %}{{ check.description | default: check.type }}{% else %}{{ check.error | default: check.description }}{% endif %}</small>
+                  </div>
+                  {% if check.success %}<span class="rule-state rule-state--ok">Passed</span>{% else %}<span class="rule-state rule-state--fail">Failed</span>{% endif %}
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </section>
+          {% endif %}
+        </div>
+
+        <aside>
+          <section class="panel">
+            <h2>What you can do</h2>
+            <ol class="steps">
+              {% unless request.is_warp %}
+              <li><b>Connect the Cloudflare One Client</b>This application may require a managed, connected device.</li>
+              {% endunless %}
+              {% if failed_checks > 0 %}
+              <li><b>Fix your device</b>Update your OS and security software, then try again.</li>
+              {% endif %}
+              <li><b>Use another account</b><a href="https://{{ app.domain }}/cdn-cgi/access/logout">Sign out</a> and sign in with your work identity.</li>
+              <li><b>Request access</b>Ask your administrator{% if ray_id.size > 0 %} and include the Ray ID below{% endif %}.</li>
+            </ol>
+            <a class="cta" href="https://{{ app.domain }}">Try again</a>
+            {% if ray_id.size > 0 %}
+            <div class="ray">Ray ID<code>{{ ray_id }}</code></div>
+            {% endif %}
+          </section>
+
+          <section class="panel">
+            <h2>Your session</h2>
+            <dl>
+              {% if user.name.size > 0 %}<dt>Name</dt><dd>{{ user.name }}</dd>{% endif %}
+              {% if user.email.size > 0 %}<dt>Email</dt><dd>{{ user.email }}</dd>{% endif %}
+              {% if user.idp %}<dt>Signed in with</dt><dd>{{ user.idp.name | default: user.idp.type }}</dd>{% endif %}
+              {% if user.amr.size > 0 %}<dt>Methods</dt><dd class="mono">{{ user.amr | join: ", " }}</dd>{% endif %}
+              {% if user.risk_score.size > 0 %}<dt>Risk score</dt><dd>{{ user.risk_score | capitalize }}</dd>{% endif %}
+              {% if request.country.size > 0 %}<dt>Location</dt><dd>{{ request.country }}</dd>{% endif %}
+              <dt>Cloudflare One Client</dt><dd>{% if request.is_warp %}Connected{% else %}Not detected{% endif %}</dd>
+              <dt>Gateway</dt><dd>{% if request.is_gateway %}Yes{% else %}No{% endif %}</dd>
+            </dl>
+          </section>
+
+          {% if user.groups.size > 0 %}
+          <section class="panel" style="padding: 0">
+            <details>
+              <summary style="border-top: 0; padding: 16px 22px">Your groups ({{ user.groups.size }})</summary>
+              <div class="groups">
+                {% for group in user.groups limit: 30 %}<span>{{ group.name | default: group.email }}</span>{% endfor %}
+              </div>
+            </details>
+          </section>
+          {% endif %}
+        </aside>
+      </div>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>Protected by Cloudflare Access · {{ brand_name }}</span>
+        <a href="{{ launcher_url }}">Open App Launcher</a>
+      </div>
+    </footer>
+  </body>
+</html>

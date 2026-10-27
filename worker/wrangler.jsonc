@@ -1,0 +1,34 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "cf1-identity-page",
+	"main": "src/index.js",
+	"compatibility_date": "2026-10-01",
+	"observability": { "enabled": true },
+
+	// Serve on a hostname protected by an Access application, so every request
+	// carries the Access JWT. Replace with your own hostname before deploying.
+	"workers_dev": false,
+	"preview_urls": false,
+	"routes": [{ "pattern": "identity.example.com", "custom_domain": true }],
+
+	"vars": {
+		// <team-name>.cloudflareaccess.com (Cloudflare One > Settings > Team name)
+		"TEAM_DOMAIN": "your-team.cloudflareaccess.com",
+		// Optional: enables "device enrolled in this organization" and API lookups.
+		"ACCOUNT_ID": "",
+		"BRAND_NAME": "DavidT · Zero Trust",
+		"BRAND_LOGO": "https://davidtofan.com/apple-touch-icon.png",
+		// Optional: adds a "Contact support" button (https:// or mailto:).
+		"SUPPORT_URL": "",
+		// Optional: group name that triggers a "restricted group" notice.
+		"TARGET_GROUP": "",
+		// "true" exposes /api/identity with the raw get-identity JSON.
+		"DEBUG": "false",
+		// "true" enables /?demo=access|gateway|identity with fake data.
+		"DEMO": "false"
+	}
+
+	// Optional secret for app names and recent failed sign-ins:
+	//   npx wrangler secret put API_TOKEN
+	// Permissions: Access: Apps and Policies Read, Account Analytics Read.
+}
