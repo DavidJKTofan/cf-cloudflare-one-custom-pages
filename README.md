@@ -14,6 +14,35 @@ Branded, user-facing pages for a Cloudflare One (Zero Trust) demo account, in a 
 
 The Liquid templates use [Access custom pages](https://developers.cloudflare.com/cloudflare-one/reusable-components/custom-pages/access-custom-pages/), launched [27 October 2026](https://developers.cloudflare.com/changelog/post/2026-10-27-access-custom-pages/). The Worker is a dependency-free take on [cloudflare/cf-identity-dynamic](https://github.com/cloudflare/cf-identity-dynamic). In a demo you can switch an application between the two.
 
+## Screenshots
+
+Captured from the local previews (`npm run preview` and `wrangler dev`) with the sample data in this repo. In the Access previews the sign-in and approval controls are look-alikes; on a live page, Access injects the real ones.
+
+### Access custom pages
+
+| Login | CLI approval (Interstitial) |
+| --- | --- |
+| ![Login page: navy header with the application name, and a white sign-in panel with identity provider buttons and a one-time PIN form](docs/screenshots/access-login.png) | ![CLI approval page asking whether cloudflared may use the Access session, with a warning to approve only self-started requests](docs/screenshots/access-interstitial.png) |
+
+**Identity denied**: each evaluated policy with its failed rules, then device posture, next steps, the Ray ID and session details. Shown on desktop and on a phone.
+
+<table>
+  <tr>
+    <td width="72%"><img src="docs/screenshots/access-identity-denied.png" alt="Identity denied page listing two unmatched Allow policies with failed rules, a device posture panel, next steps with a Ray ID, and session details"></td>
+    <td><img src="docs/screenshots/access-identity-denied-mobile.png" alt="The identity denied page on a phone-sized screen"></td>
+  </tr>
+</table>
+
+**Forbidden**: the same layout for checks that run before sign-in, here an IP and country service-auth policy.
+
+![Forbidden page explaining that a non-identity service-auth policy blocked the request, with the failed IP and country rules](docs/screenshots/access-forbidden.png)
+
+### Workers identity page
+
+| Redirected by Access (`?demo=access`) | Redirected by Gateway (`?demo=gateway`) |
+| --- | --- |
+| ![Worker page for an Access denial: session and device checks, recent failed sign-ins, and a Try again link](docs/screenshots/worker-access.png) | ![Worker page for a Gateway block: blocked site, matched categories and policy ID, and session and device checks](docs/screenshots/worker-gateway.png) |
+
 ## Access templates
 
 Each template is a standalone HTML file, so you can paste it straight into **Cloudflare One → Reusable components → Custom pages → Access custom pages → Create custom page**. The brand name, logo and App Launcher link are `{% assign %}` lines at the top of each file. Colors are the `:root` tokens in its `<style>`.
@@ -112,6 +141,7 @@ Both modes keep the branded login and CLI approval templates. Only the denial pa
 ```
 access-pages/   Liquid templates + samples.json for local preview
 brand.json      names, logo, colors, App Launcher and Gateway copy
+docs/           screenshots used in this README
 tools/          preview.mjs (local renderer), cf1.mjs (API deploy)
 worker/         Workers identity page (wrangler)
 ```

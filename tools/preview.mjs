@@ -14,17 +14,24 @@ const root = new URL('../access-pages/', import.meta.url);
 const port = Number(process.env.PORT || 4173);
 const engine = new Liquid({ strictVariables: false, strictFilters: true });
 
+// Labels as the real authbox shows them: "<provider type> • <display name>".
+const IDP_TYPES = { github: 'GitHub', google: 'Google', okta: 'Okta', saml: 'SAML', oidc: 'OpenID Connect', azureAD: 'Microsoft Entra ID', cloudflare: 'Cloudflare' };
+
 const mockAuthbox = (data) => {
 	const text = data.org?.text_color || '#333333';
 	const accent = data.org?.accent_color || '#4687f1';
 	const idps = (data.idps || [])
-		.map((idp) => `<div style="padding:10px 12px;margin-bottom:8px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#111">${idp.type === 'cloudflare' ? 'Cloudflare' : `${idp.type.toUpperCase()} · ${idp.name}`}</div>`)
+		.map((idp) => {
+			const type = IDP_TYPES[idp.type] || idp.type;
+			const label = idp.name && idp.name !== type ? `${type} • ${idp.name}` : type;
+			return `<div style="padding:10px 12px;margin-bottom:8px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#111">${label}</div>`;
+		})
 		.join('');
 	const otp = data.has_onetimepin
 		? `<div style="margin:16px 0 8px;text-align:center;color:#9ca3af;font-size:12px">or</div>
        <label style="display:block;margin-bottom:6px;color:${text}">Email</label>
        <div style="padding:10px 12px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#9ca3af">example@email.com</div>
-       <div style="margin-top:10px;padding:10px;border-radius:6px;background:${accent};color:#fff;text-align:center">Send login code</div>`
+       <div style="margin-top:10px;padding:10px;border-radius:6px;background:linear-gradient(180deg,${accent}cc,${accent});color:#fff;text-align:center">Send login code</div>`
 		: '';
 	return `<cf-access-authbox data-preview><div style="margin-bottom:10px;color:${text}">Sign in with:</div>${idps}${otp}</cf-access-authbox>`;
 };

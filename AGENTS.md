@@ -83,7 +83,9 @@ Observed live:
 
 - Templates stay standalone so they can be pasted into the dashboard. Brand values are duplicated on purpose: when you change them, update all four templates, `brand.json`, and `worker/wrangler.jsonc` `vars`.
 - The repo is public. Keep account-specific values out of it: account, zone, app and template IDs, the real team domain (templates use `your-team.cloudflareaccess.com`, filled from `CF1_TEAM_DOMAIN` at deploy time), real user or group names, and details of what the account protects. Commits use the author's GitHub noreply address.
+- Commit messages and PR descriptions: plain, with no AI co-author trailers, "generated with" footers, or mentions of the tool or model used.
 - When the variable contract changes, update `access-pages/samples.json` with it.
+- `docs/screenshots/*.png` come from the local previews: headless Chromium at 1280px wide (390px for mobile) and 2× scale, full page for the denial pages, using only the sample data. Retake them when a template's look changes. Never capture live pages: they show real app names, identity providers and the team domain.
 - Say "Cloudflare One Client", not "WARP". `is_warp` is still the variable name.
 - The Worker has no runtime dependencies and ships no client JavaScript: server-rendered HTML through the escaping `html` tag in `worker/src/page.js`, plus a strict CSP. Treat redirect query parameters as untrusted, and pass URLs through `safeUrl`.
 - Formatting: tabs in `.js`/`.mjs`/`.jsonc`; two spaces in HTML, CSS and JSON. Keep comments sparse and explain why, not what.
