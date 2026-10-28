@@ -93,8 +93,9 @@ function historyPanel(failures) {
 function actionsPanel(source, identity, env, reference) {
 	const steps = [];
 	if (identity && !identity.is_warp) steps.push(['Connect the Cloudflare One Client', 'This resource may require a managed, connected device.']);
-	// No /cdn-cgi/access/logout link: it revokes the user in every application
-	// and forces Cloudflare One Client re-authentication.
+	// No /cdn-cgi/access/logout link: it revokes the user's Access sessions in
+	// every application, and apps that use client authentication then ask the
+	// Cloudflare One Client to re-authenticate.
 	if (source.kind === 'access') steps.push(['Use another account', 'Open the application in a private window and sign in with your work identity.']);
 	if (source.kind === 'gateway') steps.push(['Check the address', 'Look for typos, or use the approved tool for this task.']);
 	steps.push(['Ask for access', 'Contact your administrator and include the reference below.']);

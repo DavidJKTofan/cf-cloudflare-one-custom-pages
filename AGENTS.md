@@ -91,7 +91,8 @@ Observed live:
 - When the variable contract changes, update `access-pages/samples.json` with it.
 - `docs/screenshots/*.png` come from the local previews: headless Chromium at 1280px wide (390px for mobile) and 2× scale, full page for the denial pages, using only the sample data. Retake them when a template's look changes. Never capture live pages: they show real app names, identity providers and the team domain.
 - Say "Cloudflare One Client", not "WARP". `is_warp` is still the variable name.
-- Never link to `/cdn-cgi/access/logout`. It revokes the user in every application, not just one, and forces Cloudflare One Client re-authentication for apps that use client sessions. Tell users to switch accounts in a private window instead.
+- Never link to `/cdn-cgi/access/logout`. It revokes the user's Access sessions in every application, not just one. The Cloudflare One Client stays enrolled and connected, and Gateway is unaffected. But apps with **Authenticate with Cloudflare One Client** on, and any Gateway policy with `check_session`, then prompt the client to re-authenticate. Tell users to switch accounts in a private window instead.
+- An app's `allow_authenticate_via_warp` always overrides the org-wide value, which only sets the default. Test it with a cookie-less `curl` through the connected client: you get the origin's response instead of a 302 to `/cdn-cgi/access/login`. If the client's identity doesn't pass the app's policies, Access still redirects to sign-in.
 - The Worker has no runtime dependencies and ships no client JavaScript: server-rendered HTML through the escaping `html` tag in `worker/src/page.js`, plus a strict CSP. Treat redirect query parameters as untrusted, and pass URLs through `safeUrl`.
 - Formatting: tabs in `.js`/`.mjs`/`.jsonc`; two spaces in HTML, CSS and JSON. Keep comments sparse and explain why, not what.
 - Sample data uses `example.com` identities. Don't put real user data in the repo.

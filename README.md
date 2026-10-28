@@ -148,7 +148,7 @@ Cloudflare One keeps three separate session clocks ([session management](https:/
 | Global | Browser single sign-on across applications | Access settings → global session duration |
 
 - The per-app **Authenticate with Cloudflare One Client** setting overrides the org-wide one, so it applies to individual apps even when the org-wide switch is off.
-- `/cdn-cgi/access/logout` isn't per-app. It revokes the user in every application, and the Cloudflare One Client must then re-authenticate for apps that use client sessions. These pages don't link to it; to switch accounts, use a private window.
+- `/cdn-cgi/access/logout` isn't per-app: it revokes the user's Access sessions in every application. It doesn't disconnect or unenroll the Cloudflare One Client, and Gateway keeps filtering. But apps that use client authentication then ask the client to re-authenticate, which is often one click while the identity provider's browser session is still active. These pages don't link to it; to switch accounts, use a private window.
 
 ## Layout
 

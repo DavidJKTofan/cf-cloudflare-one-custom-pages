@@ -12,7 +12,8 @@
   absent or false while the client was connected), so only true is shown.
 
   There is no sign-out link on purpose: /cdn-cgi/access/logout revokes the
-  user in every application and forces Cloudflare One Client re-authentication.
+  user's Access sessions in every application. The Cloudflare One Client stays
+  connected, but apps that use client authentication ask it to re-authenticate.
 
   No scripts, SVG, <link>, <button>, <form>, or url() in CSS.
 {% endcomment %}
