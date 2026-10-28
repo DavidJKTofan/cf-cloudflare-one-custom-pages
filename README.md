@@ -137,6 +137,19 @@ npm run demo:mode -- <access-app-id> template
 
 Both modes keep the branded login and CLI approval templates. Only the denial pages switch.
 
+## Sessions and sign-out
+
+Cloudflare One keeps three separate session clocks ([session management](https://developers.cloudflare.com/cloudflare-one/access-controls/access-settings/session-management/), [client sessions](https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/cloudflare-one-client/configure/client-sessions/)):
+
+| Session | What it controls | Where it's set |
+| --- | --- | --- |
+| Cloudflare One Client | Apps with **Authenticate with Cloudflare One Client** on, which open without a browser sign-in | Access settings → Cloudflare One Client authentication (`warp_auth_session_duration`, up to 90 days) |
+| Application | One application's cookie | The app's or policy's session duration |
+| Global | Browser single sign-on across applications | Access settings → global session duration |
+
+- The per-app **Authenticate with Cloudflare One Client** setting overrides the org-wide one, so it applies to individual apps even when the org-wide switch is off.
+- `/cdn-cgi/access/logout` isn't per-app. It revokes the user in every application, and the Cloudflare One Client must then re-authenticate for apps that use client sessions. These pages don't link to it; to switch accounts, use a private window.
+
 ## Layout
 
 ```

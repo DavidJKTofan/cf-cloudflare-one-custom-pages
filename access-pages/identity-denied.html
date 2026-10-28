@@ -11,6 +11,9 @@
   Access doesn't reliably report request.is_warp or request.is_gateway (seen
   absent or false while the client was connected), so only true is shown.
 
+  There is no sign-out link on purpose: /cdn-cgi/access/logout revokes the
+  user in every application and forces Cloudflare One Client re-authentication.
+
   No scripts, SVG, <link>, <button>, <form>, or url() in CSS.
 {% endcomment %}
 {% assign brand_name = "DavidT · Zero Trust" %}
@@ -308,7 +311,7 @@
               {% if failed_checks > 0 %}
               <li><b>Fix your device</b>Update your OS and security software, then try again.</li>
               {% endif %}
-              <li><b>Use another account</b><a href="https://{{ app.domain }}/cdn-cgi/access/logout">Sign out</a> and sign in with your work identity.</li>
+              <li><b>Use another account</b>Open the application in a private window and sign in with your work identity.</li>
               <li><b>Request access</b>Ask your administrator{% if ray_id.size > 0 %} and include the Ray ID below{% endif %}.</li>
             </ol>
             <a class="cta" href="https://{{ app.domain }}">Try again</a>

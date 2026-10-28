@@ -37,6 +37,7 @@ This is a real account with production applications. Treat every write as produc
 1. **Read before write, snapshot, then diff.** Save the GET result before any PUT or PATCH, and compare afterwards. Keep rollback copies outside the repo.
 2. **Gateway configuration:** a `PATCH /gateway/configuration` with only `settings.block_page` removed `inspection`, `host_selector` and `sandbox` from the account. Send back the full current settings without read-only fields (`tools/cf1.mjs` does this), then verify every key.
 3. **Access applications:** `PUT /access/apps/{id}` replaces the whole object. Send the GET result back without `id`, `aud`, `created_at` and `updated_at`, with `policies` as `[{ id, precedence }]`. Reusable and inline policies can't be mixed on one app.
+   **Access organization:** `PUT /access/organizations` also replaces everything. Send the GET result without `created_at`, `updated_at`, `has_migrated_private_apps`, `trusted_accounts` and `service_token_inactivity`. When disabled, that last one reads back with `null` threshold and action, which fails with `12062 invalid_org_config`.
 4. **Don't set account defaults** for custom pages, or assign templates to existing apps, without asking. Defaults apply to every app, including private ones.
 5. **DNS changes need explicit user approval** (new hostnames, Worker custom domains). To test without DNS, add a temporary, path-scoped self-hosted app on an existing proxied hostname, set `app_launcher_visible: false`, and delete it, plus any probe templates, when you're done.
 6. Report what you changed, and anything you couldn't verify.
@@ -90,6 +91,7 @@ Observed live:
 - When the variable contract changes, update `access-pages/samples.json` with it.
 - `docs/screenshots/*.png` come from the local previews: headless Chromium at 1280px wide (390px for mobile) and 2× scale, full page for the denial pages, using only the sample data. Retake them when a template's look changes. Never capture live pages: they show real app names, identity providers and the team domain.
 - Say "Cloudflare One Client", not "WARP". `is_warp` is still the variable name.
+- Never link to `/cdn-cgi/access/logout`. It revokes the user in every application, not just one, and forces Cloudflare One Client re-authentication for apps that use client sessions. Tell users to switch accounts in a private window instead.
 - The Worker has no runtime dependencies and ships no client JavaScript: server-rendered HTML through the escaping `html` tag in `worker/src/page.js`, plus a strict CSP. Treat redirect query parameters as untrusted, and pass URLs through `safeUrl`.
 - Formatting: tabs in `.js`/`.mjs`/`.jsonc`; two spaces in HTML, CSS and JSON. Keep comments sparse and explain why, not what.
 - Sample data uses `example.com` identities. Don't put real user data in the repo.
