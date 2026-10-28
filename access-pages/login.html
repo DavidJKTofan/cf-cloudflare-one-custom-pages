@@ -10,6 +10,9 @@
 
   The authbox draws its labels in org.text_color and its buttons in white,
   so it sits on the light lower half of the card.
+
+  Access doesn't reliably report request.is_warp or request.is_gateway (seen
+  absent or false while the client was connected), so only true is shown.
 {% endcomment %}
 {% assign brand_name = org.name | default: "DavidT · Zero Trust" %}
 {% assign brand_logo = org.logo_url | default: "https://davidtofan.com/apple-touch-icon.png" %}
@@ -185,11 +188,7 @@
 
         <div class="meta">
           {% if request.country.size > 0 %}<span class="chip">Location · {{ request.country }}</span>{% endif %}
-          {% if request.is_warp %}
-          <span class="chip"><span class="dot dot--ok"></span>Cloudflare One Client on</span>
-          {% else %}
-          <span class="chip"><span class="dot"></span>Cloudflare One Client off</span>
-          {% endif %}
+          {% if request.is_warp %}<span class="chip"><span class="dot dot--ok"></span>Cloudflare One Client connected</span>{% endif %}
           {% if request.is_gateway %}<span class="chip"><span class="dot dot--ok"></span>Gateway</span>{% endif %}
         </div>
       </div>

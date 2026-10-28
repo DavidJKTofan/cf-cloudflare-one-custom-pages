@@ -40,6 +40,7 @@ This is a real account with production applications. Treat every write as produc
 4. **Don't set account defaults** for custom pages, or assign templates to existing apps, without asking. Defaults apply to every app, including private ones.
 5. **DNS changes need explicit user approval** (new hostnames, Worker custom domains). To test without DNS, add a temporary, path-scoped self-hosted app on an existing proxied hostname, set `app_launcher_visible: false`, and delete it, plus any probe templates, when you're done.
 6. Report what you changed, and anything you couldn't verify.
+7. Testing Gateway block pages: browsers with their own Secure DNS (DoH to 1.1.1.1) bypass Gateway DNS. Network (L4) policies run before HTTP policies and close the connection without a block page, so the result is `ERR_CONNECTION_CLOSED`. Check `cdn-cgi/trace`, `dig` against the client resolver, and the Gateway network and HTTP logs before blaming the block page.
 
 ## Access custom page templates
 
@@ -62,6 +63,8 @@ Observed live:
 - An IdP's `name` can be empty (the Cloudflare IdP).
 - `ray_id` came back empty on a Forbidden page.
 - `policy_evaluation` is absent when a service-auth (`non_identity`) policy fails.
+- `request.is_warp` and `request.is_gateway` didn't reflect a connected client: absent on Login, and `false` on Forbidden, while `cdn-cgi/trace` showed `warp=on` and `gateway=on`. Forbidden also reported a different `request.country` from Login. The org had WARP authentication identity (`allow_authenticate_via_warp`) turned off, which may be the cause; this is untested. Only show these values when `true`, and never print "off" or "not detected".
+- Newly created Access apps can take more than 10 minutes to load at the edge. Until then the path returns error 1043 ("Cannot find Access application").
 - Identity denied and Interstitial have only been rendered locally, because they need a real sign-in.
 
 ### Sandbox rules (enforced by `POST /access/custom_pages/validate`)

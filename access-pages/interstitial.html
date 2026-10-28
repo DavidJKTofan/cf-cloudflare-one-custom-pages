@@ -6,6 +6,8 @@
 
   Rules: exactly one <cf-access-cli-approval>, outside any Liquid condition.
   It sits on the light lower half of the card, like the login authbox.
+  Access doesn't reliably report request.is_warp or request.is_gateway (seen
+  absent or false while the client was connected), so only true is shown.
   No scripts, SVG, <link>, <button>, <form>, or url() in CSS.
 {% endcomment %}
 {% assign brand_name = "DavidT · Zero Trust" %}
@@ -147,7 +149,7 @@
           <dt>Requested by</dt><dd><code>{{ tool }}</code></dd>
           {% if user.email.size > 0 %}<dt>Signed in as</dt><dd>{{ user.email }}</dd>{% endif %}
           {% if request.country.size > 0 %}<dt>Location</dt><dd>{{ request.country }}</dd>{% endif %}
-          <dt>Cloudflare One Client</dt><dd>{% if request.is_warp %}Connected{% else %}Not detected{% endif %}</dd>
+          {% if request.is_warp %}<dt>Cloudflare One Client</dt><dd>Connected</dd>{% endif %}
         </dl>
 
         <p class="notice">

@@ -51,7 +51,7 @@ The App Launcher link uses the placeholder `your-team.cloudflareaccess.com`. `np
 
 What each page shows:
 
-- **Login**: application name and domain, sign-in status messages (`message.level`), and connection chips (country, Cloudflare One Client, Gateway). Access injects the identity provider buttons and the one-time PIN form into `<cf-access-authbox>`. They render in Cloudflare's own white style and use `org.text_color` for labels, so they sit on the light half of a two-tone card.
+- **Login**: application name and domain, sign-in status messages (`message.level`), and connection chips: the country, plus Cloudflare One Client and Gateway only when Access reports them as on. Access injects the identity provider buttons and the one-time PIN form into `<cf-access-authbox>`. They render in Cloudflare's own white style and use `org.text_color` for labels, so they sit on the light half of a two-tone card.
 - **Identity denied**: every evaluated policy from `policy_evaluation`, with failed rules first and passed rules collapsed, plus device posture results, session details (IdP, auth methods, risk score), groups, next steps, and the Ray ID.
 - **Forbidden**: the same layout, written for checks that run before sign-in (location, IP, device, certificate, service token).
 - **Interstitial**: what's asking for the session (`requesting_tool`), for which app and user, plus a "only approve if you ran this" warning around `<cf-access-cli-approval>`.
@@ -61,6 +61,7 @@ Sandbox rules found while building these. The validator enforces them, and the d
 - No `<script>`, inline event handlers, `<svg>`, `<button>`, `<form>`, `<link>`, `<meta http-equiv>`, or `@import`/`url()` in CSS. Use system fonts, Unicode glyphs and CSS shapes; `<img>` with HTTPS URLs works.
 - Liquid treats an empty string as true, and Access sends some fields empty (for example `ray_id`). Check strings with `{% if x.size > 0 %}`, not `{% if x %}`.
 - `policy_evaluation` can be absent, for example when a service-auth (`non_identity`) policy fails. Every template has a fallback.
+- `request.is_warp` and `request.is_gateway` aren't reliable. In live tests, with the Cloudflare One Client connected (the edge trace showed `warp=on`, `gateway=on`), Access left them out on the Login page and sent `false` on the Forbidden page. The templates show them only when they're `true`, and always include a "check the Cloudflare One Client" step.
 - When you create a template through the API, send `contract_version` (the `version` returned by `/access/custom_pages/validate`). Without it the page is stored as a legacy page and the Liquid is shown verbatim.
 
 ### Preview locally

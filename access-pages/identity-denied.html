@@ -8,6 +8,9 @@
   rule names are written by your admins: review them before you show them to
   end users. Remove the groups list if group names are sensitive.
 
+  Access doesn't reliably report request.is_warp or request.is_gateway (seen
+  absent or false while the client was connected), so only true is shown.
+
   No scripts, SVG, <link>, <button>, <form>, or url() in CSS.
 {% endcomment %}
 {% assign brand_name = "DavidT · Zero Trust" %}
@@ -301,9 +304,7 @@
           <section class="panel">
             <h2>What you can do</h2>
             <ol class="steps">
-              {% unless request.is_warp %}
-              <li><b>Connect the Cloudflare One Client</b>This application may require a managed, connected device.</li>
-              {% endunless %}
+              <li><b>Check the Cloudflare One Client</b>This application may require a managed device. Make sure the client is installed and shows Connected.</li>
               {% if failed_checks > 0 %}
               <li><b>Fix your device</b>Update your OS and security software, then try again.</li>
               {% endif %}
@@ -325,8 +326,8 @@
               {% if user.amr.size > 0 %}<dt>Methods</dt><dd class="mono">{{ user.amr | join: ", " }}</dd>{% endif %}
               {% if user.risk_score.size > 0 %}<dt>Risk score</dt><dd>{{ user.risk_score | capitalize }}</dd>{% endif %}
               {% if request.country.size > 0 %}<dt>Location</dt><dd>{{ request.country }}</dd>{% endif %}
-              <dt>Cloudflare One Client</dt><dd>{% if request.is_warp %}Connected{% else %}Not detected{% endif %}</dd>
-              <dt>Gateway</dt><dd>{% if request.is_gateway %}Yes{% else %}No{% endif %}</dd>
+              {% if request.is_warp %}<dt>Cloudflare One Client</dt><dd>Connected</dd>{% endif %}
+              {% if request.is_gateway %}<dt>Gateway</dt><dd>Active</dd>{% endif %}
             </dl>
           </section>
 
